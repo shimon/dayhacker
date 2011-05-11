@@ -1,0 +1,91 @@
+DayHacker
+by Shimon Rura, shimon@rura.org
+
+DayHacker is a python program that generates a one-page PDF you can use to
+track your daily schedule and how you spend your time. The recommended use
+is to print off the page each morning, and track how you spend each hour
+during the day using a scoring system that encourages you to devote time
+toward your most important goals.
+
+LICENSE
+
+This software is licensed under the GNU General Public License, version
+3. For details see the file LICENSE.
+
+FEATURES
+
+ * Most Important Things - write down the 3 things you most want to
+   accomplish today. This helps avoid getting pulled in by distractions.
+
+ * Pulls your calendar data from an iCal feed - if you use Google Calendar
+   or anything else with an iCal feed, dayhacker will pull in that data and
+   include it on your PDF in the appropriate hour slot.
+
+ * Weather - pulls weather conditions & forecast for today, so you know if
+   you should put on a jacket.
+
+ * Customizable scoring - set up to 5 categories for how you spend your
+   time, and the hourly score for each. This scoring is a little trick to
+   encourage you to reflect on how you're spending your time, so you should
+   take the time to adjust it to your current life goals.
+
+ * Custom reminders - you can set custom reminders (currently only on a
+   monthly basis). So if you need to move your car for street cleaning on
+   the second Wednesday of every month, dayhacker can help you avoid getting
+   towed.
+
+HOW TO USE IT
+
+1. Install the python modules we depend on:
+   - vobject   (feed parsing)
+   - reportlab (PDF generation)
+   (let me know if i forgot something)
+
+2. Copy dayhacker_personalization.py.template to
+   dayhacker_personalization.py, and follow the instructions inside to edit
+   it to include your iCal feed URL and other personalized settings.
+
+3. Run the program (PDF output goes to stdout):
+   $ python dayhacker.py > today.pdf
+
+   Or print it using pdf2ps:
+   dayhacker.py > today.pdf && pdf2ps today.pdf - | lpr
+
+   Or put it in your crontab to print at 7am each morning, with a standard daily survey on the back:
+   0 7  *   *   *     /home/shimon/hacks/dayhacker/dayhacker.py > /tmp/dayhacker-shimon-today.pdf && /usr/bin/pdftk /tmp/dayhacker-shimon-today.pdf /home/shimon/hacks/dayhacker/daily_survey.pdf cat output /tmp/dayhacker-shimon-today-with-survey.pdf && /usr/bin/pdf2ps /tmp/dayhacker-shimon-today-with-survey.pdf - | lpr
+   
+
+4. As you go through the day, keep the printed sheet with you. Every hour or
+   two, look back at the sheet and write down what you did in the preceding
+   hours.
+
+5. At the end of the day, score the whole day.
+
+6. Each week, review the week's scores to look for patterns and consider
+   rebalancing your scores or identifying different goals.
+
+7. Write a blog post explaining your system! I'm really curious how people
+   might use dayhacker.
+
+
+KNOWN ISSUES
+
+ * The calendar feed does not properly handle recurring events. Only
+   single-point scheduled events show up reliably on dayhacker.
+
+ * Some calendar feeds include datestamps with an invalid year. It's not
+   uncommon to see a lot of these sorts of warning messages on stderr while
+   running dayhacker:
+
+Warning: could not parse datetime ('00001231T000000Z', None); using now instead.
+Traceback (most recent call last):
+  File "/home/shimon/.u/hacks/dayhacker/dayhackercal.py", line 16, in new_stringToDateTime
+    return vobject.icalendar.stringToDateTime_OLD(s, tzinfo)
+  File "/usr/lib/pymodules/python2.6/vobject/icalendar.py", line 1620, in stringToDateTime
+    return datetime.datetime(year, month, day, hour, minute, second, 0, tzinfo)
+ValueError: year is out of range
+
+   DayHacker monkeypatches vobject so this sort of crap doesn't cause
+   DayHacker to crash, but it probably does screw up the handling of certain
+   events. Maybe this is related to the bug of missing recurring events, but
+   I haven't investigated yet.

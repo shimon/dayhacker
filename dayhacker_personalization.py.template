@@ -1,0 +1,68 @@
+"""
+This file contains personal settings used by dayhacker to generate calendar PDFs.
+Copy the .template file to dayhacker_personalization.py and edit to include
+your ICal feed, name, etc.
+"""
+
+# This is used in generating the title on the PDF.
+YOUR_NAME = "Shimon Rura"
+
+# iCalendar feed URL, if you want your schedule included.  Set to None to omit
+# calendar data inclusion.
+ICAL_FEED_URL = "http://www.google.com/calendar/ical/someone%40gmail.com/private-.../basic.ics"
+
+# Location for weather.  Set to None to omit weather info.  Zipcodes or
+# city,st should work; if you're not seeing the weather text even with this
+# set, data might not be available for the location you've specified.
+WEATHER_LOCATION = "02140"
+
+# These classifications are used to generate the scoring part of 
+# Modify these as desired.  You have two lines of title text and a score
+# line for each category.
+#
+# There is room for 5 of these; less will look OK, more will probably
+# require tweaking the location of the TOTAL: text on the bottom line.
+CLASSIFICATIONS = (
+    dict(title1="Billable",
+         title2="Work",
+         score=5),
+    dict(title1="Required",
+         title2="Overhead",
+         score=4),
+    dict(title1="Professional",
+         title2="Development",
+         score=4),
+    dict(title1="Personal",
+         title2="Development",
+         score=3),
+    dict(title1="R&R",
+         score=1),
+)
+
+# You can set custom reminders. Currently the only supported period is
+# "monthly".  For monthly repeating events, you select the "point" (weekday;
+# monday=0) and the "seq" (which of the weeks in the month). So the first
+# monday of every month would be point=0 seq=0; the second wednesday would
+# be point=2 seq=1, etc. As you can see, this was written to help me
+# remember to move my car on street cleaning days.
+CUSTOM_DAY_REMINDERS = (
+    dict(title="St Cleaning, 1st Tue (No park far side)",
+         period="monthly",
+         point=1, # as returned by datetime.date.today().weekday()
+         seq=0),  # the result of math.floor(( datetime.date.today().day - 1 ) / 7.0) ## (zero-indexed)
+
+    dict(title="St Cleaning, 3rd Tue (No park far side)",
+         period="monthly",
+         point=1,
+         seq=2),
+    
+    dict(title="St Cleaning, 2nd Wed (No park near-side)",
+         period="monthly",
+         point=2,
+         seq=1),
+    
+    dict(title="St Cleaning, 4th Wed (No park near-side)",
+         period="monthly",
+         point=2,
+         seq=3),
+)
